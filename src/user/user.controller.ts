@@ -2,7 +2,9 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Patch,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
@@ -15,16 +17,33 @@ import { UserService } from './user.service';
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
+
   @Get('me')
   getMe(@GetUser() user: User) {
     return user;
   }
 
-  @Patch()
+  @Patch(':id')
   editUser(
-    @GetUser('id') userId: number,
+    @Param('id') userId: string,
     @Body() dto: EditUserDto,
   ) {
-    return this.userService.editUser(userId, dto);
+    return this.userService.editUser(
+      Number(userId),
+      dto,
+    );
+  }
+
+  @Get(':id/prefrance')
+  setPrefrance(
+    @Param('id') userId: string,
+    @Query() query: any,
+  ) {
+    const { name, color } = query;
+    return this.userService.addUserPrefrances(
+      Number(userId),
+      name,
+      color,
+    );
   }
 }

@@ -23,4 +23,28 @@ export class UserService {
 
     return user;
   }
+
+  async addUserPrefrances(
+    userId: number,
+    name: string,
+    color: string,
+  ) {
+    const user =
+      await this.prisma.preference.upsert({
+        where: {
+          userId,
+        },
+        update: {
+          color,
+          name,
+        },
+        create: {
+          userId,
+          name,
+          color,
+        },
+      });
+
+    return user;
+  }
 }
